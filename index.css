@@ -5,13 +5,13 @@
 }
 
 .k-block-selector .k-block-types {
-  grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(7.375rem, 1fr));
   grid-gap: 0.75rem;
 }
 
 @media (min-width: 30em) {
   .k-block-selector .k-block-types {
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(11.25rem, 1fr));
   }
 }
 
