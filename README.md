@@ -28,6 +28,8 @@ composer require junohamburg/kirby-visual-block-selector
 2. Create the folder `assets/block-previews`.
 3. Save the images in the `assets/block-previews` folder with the same name as the block. For example, the preview image of `heading.yml` is `heading.png`. Any image format (png, jpg, gif, svg) should work.
 
+Tip: You can define fieldset groups for the `blocks` field: (Kirby docs)[https://getkirby.com/docs/reference/panel/fields/blocks#defining-fieldsets__groups]
+
 ## License
 
 MIT
