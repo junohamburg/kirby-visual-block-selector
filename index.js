@@ -11,40 +11,40 @@ panel.plugin('junohamburg/kirby-visual-block-selector', {
 
     const unsubscribe = Vue.$store.subscribeAction(async (action, state) => {
       // Fetch preview images once, but only if user is logged in
-      if (state.content.current !== null) {
-        unsubscribe();
+      if (Vue.$user === undefined || Vue.$user === null) return;
 
-        // Create custom store for block selector
-        Vue.$store.registerModule('visualBlockSelector', {
-          state: () => ({
-            images: {}
-          }),
-          mutations: {
-            updateImages(state, images) {
-              state.images = images;
-            }
-          },
-          actions: {
-            updateImages({ commit }, { images }) {
-              commit('updateImages', images);
-            }
+      unsubscribe();
+
+      // Create custom store for block selector
+      Vue.$store.registerModule('visualBlockSelector', {
+        state: () => ({
+          images: {}
+        }),
+        mutations: {
+          updateImages(state, images) {
+            state.images = images;
           }
-        });
-
-        // Load images
-        const images = await Vue.$api.get('visual-block-selector');
-        const imagePromises = {};
-
-        for (const [name, img] of Object.entries(images)) {
-          imagePromises[name] = await loadImage(img);
+        },
+        actions: {
+          updateImages({ commit }, { images }) {
+            commit('updateImages', images);
+          }
         }
+      });
 
-        // Update store
-        Vue.$store.dispatch({
-          type: 'updateImages',
-          images: imagePromises
-        });
+      // Load images
+      const images = await Vue.$api.get('visual-block-selector');
+      const imagePromises = {};
+
+      for (const [name, img] of Object.entries(images)) {
+        imagePromises[name] = await loadImage(img);
       }
+
+      // Update store
+      Vue.$store.dispatch({
+        type: 'updateImages',
+        images: imagePromises
+      });
     });
   },
   use: [
