@@ -1,4 +1,4 @@
-panel.plugin('junohamburg/kirby-visual-block-selector', {
+panel.plugin('junohamburg/visual-block-selector', {
   created(Vue) {
     function loadImage(url) {
       return new Promise(resolve => {

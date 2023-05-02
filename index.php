@@ -1,6 +1,6 @@
 <?php
 
-Kirby::plugin('junohamburg/kirby-visual-block-selector', [
+Kirby::plugin('junohamburg/visual-block-selector', [
   'api' => [
     'routes' => [
       [
