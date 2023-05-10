@@ -30,7 +30,7 @@ composer require junohamburg/kirby-visual-block-selector
 
 Tip: You can define fieldset groups for the `blocks` field: [Kirby docs](https://getkirby.com/docs/reference/panel/fields/blocks#defining-fieldsets__groups)
 
-**:warning: Please note:** If a `blocks` field does not have any preview images for its defined `fieldsets`, the default Kirby block selector will be displayed.
+**:warning: Please note:** If there are no preview images for a `blocks` field, the default Kirby block selector will be displayed.
 
 ## License
 
