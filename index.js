@@ -18,32 +18,51 @@ panel.plugin('junohamburg/visual-block-selector', {
       // Create custom store for block selector
       Vue.$store.registerModule('visualBlockSelector', {
         state: () => ({
+          blockTypes: [],
           images: {}
         }),
         mutations: {
+          updateBlockTypes(state, blockTypes) {
+            state.blockTypes = blockTypes;
+          },
           updateImages(state, images) {
             state.images = images;
           }
         },
         actions: {
+          updateBlockTypes({ commit }, { blockTypes }) {
+            commit('updateBlockTypes', blockTypes);
+          },
           updateImages({ commit }, { images }) {
             commit('updateImages', images);
           }
         }
       });
 
-      // Load images
-      const images = await Vue.$api.get('visual-block-selector');
-      const imagePromises = {};
+      const apiResponse = await Vue.$api.get('visual-block-selector');
+      const blockTypes = [];
+      const images = {};
 
-      for (const [name, img] of Object.entries(images)) {
-        imagePromises[name] = await loadImage(img);
+      // Get block types
+      for (const name of Object.keys(apiResponse)) {
+        blockTypes.push(name);
+      }
+
+      // Update store
+      Vue.$store.dispatch({
+        type: 'updateBlockTypes',
+        blockTypes: blockTypes
+      });
+
+      // Load images
+      for (const [name, img] of Object.entries(apiResponse)) {
+        images[name] = await loadImage(img);
       }
 
       // Update store
       Vue.$store.dispatch({
         type: 'updateImages',
-        images: imagePromises
+        images: images
       });
     });
   },
@@ -59,7 +78,7 @@ panel.plugin('junohamburg/visual-block-selector', {
             :cancel-button="false"
             :submit-button="false"
             class="k-block-selector"
-            size="medium"
+            :size="showVisualBlockSelector ? 'visual' : 'medium'"
             @open="onOpen"
             @close="onClose"
           >
@@ -72,7 +91,8 @@ panel.plugin('junohamburg/visual-block-selector', {
               :open="group.open"
             >
               <summary>{{ group.label }}</summary>
-              <div class="k-block-types">
+
+              <div class="k-block-types" v-if="showVisualBlockSelector">
                 <k-button
                   v-for="fieldset in group.fieldsets"
                   :ref="'fieldset-' + fieldset.index"
@@ -86,6 +106,20 @@ panel.plugin('junohamburg/visual-block-selector', {
                   <k-icon v-else :type="fieldset.icon || 'box'" />
                   <span>{{ fieldset.name }}</span>
                 </k-button>
+              </div>
+
+              <div class="k-block-types" v-else>
+                <k-button
+                  v-for="fieldset in group.fieldsets"
+                  :ref="'fieldset-' + fieldset.index"
+                  :key="fieldset.name"
+                  :disabled="disabled.includes(fieldset.type)"
+                  :icon="fieldset.icon || 'box'"
+                  :text="fieldset.name"
+                  @keydown.up="navigate(fieldset.index - 1)"
+                  @keydown.down="navigate(fieldset.index + 1)"
+                  @click="add(fieldset.type)"
+                />
               </div>
             </details>
             <!-- eslint-disable vue/no-v-html -->
@@ -107,6 +141,23 @@ panel.plugin('junohamburg/visual-block-selector', {
           ...original.options.computed,
           previewImages() {
             return this.$store.state.visualBlockSelector.images;
+          },
+          showVisualBlockSelector() {
+            let showVisualBlockSelector = false;
+
+            for (const group of Object.values(this.groups)) {
+              for (const fieldset of group.fieldsets) {
+                if (
+                  this.$store.state.visualBlockSelector.blockTypes.includes(
+                    fieldset.type
+                  )
+                ) {
+                  showVisualBlockSelector = true;
+                }
+              }
+            }
+
+            return showVisualBlockSelector;
           }
         },
         methods: original.options.methods

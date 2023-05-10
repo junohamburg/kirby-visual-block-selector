@@ -1,6 +1,6 @@
 # Kirby Visual Block Selector
 
-This plugin for Kirby 3 replaces the block selector with a customized version that displays a preview image for each block. If no image is provided, the block icon is displayed.
+This plugin for Kirby 3 replaces the block selector with a customized version that displays a preview image for each block.
 
 ![Visual block selector](https://github.com/junohamburg/kirby-visual-block-selector/assets/77532479/520481ea-08db-4620-8aa6-8f88cc4ec595)
 
@@ -29,6 +29,8 @@ composer require junohamburg/kirby-visual-block-selector
 3. Save the images in the `assets/block-previews` folder with the same name as the block. For example, the preview image of `heading.yml` is `heading.png`. Any image format (png, jpg, gif, svg) should work.
 
 Tip: You can define fieldset groups for the `blocks` field: [Kirby docs](https://getkirby.com/docs/reference/panel/fields/blocks#defining-fieldsets__groups)
+
+**:warning: Please note:** If a `blocks` field does not have any preview images for its defined `fieldsets`, the default Kirby block selector will be displayed.
 
 ## License
 
