@@ -13,7 +13,7 @@ Download and copy this repository to `/site/plugins/kirby-visual-block-selector`
 ### Git submodule
 
 ```
-git submodule add https://github.com/junohamburg/kirby-visual-block-selector/v4-beta.git site/plugins/kirby-visual-block-selector
+git submodule add --branch v4-beta -- https://github.com/junohamburg/kirby-visual-block-selector.git site/plugins/kirby-visual-block-selector
 ```
 
 ### Composer
