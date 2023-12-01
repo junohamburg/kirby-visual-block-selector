@@ -2,7 +2,7 @@
 
 This plugin for **Kirby 4** replaces the block selector with a customized version that displays a preview image for each block.
 
-![screenshot-v4](https://github.com/junohamburg/kirby-visual-block-selector/assets/77532479/eca916ca-cdac-452b-b902-fe3bf2b9514d)
+![Visual block selector](https://github.com/junohamburg/kirby-visual-block-selector/assets/77532479/ce536902-4ea3-4da1-a88b-bfb6eb01dbaf)
 
 Please note: If you are using **Kirby 3**, please us [v1.1.2](https://github.com/junohamburg/kirby-visual-block-selector/releases/tag/1.1.2)
 
