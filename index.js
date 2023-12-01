@@ -11,7 +11,7 @@ panel.plugin('junohamburg/visual-block-selector', {
 
     const unsubscribe = Vue.$store.subscribeAction(async (action, state) => {
       // Fetch preview images once, but only if user is logged in
-      if (Vue.$user === undefined || Vue.$user === null) return;
+      if (window.panel.user.id === null) return;
 
       unsubscribe();
 
@@ -68,59 +68,63 @@ panel.plugin('junohamburg/visual-block-selector', {
   },
   use: [
     function (Vue) {
-      // https://github.com/getkirby/kirby/blob/main/panel/src/components/Forms/Blocks/BlockSelector.vue
       const original = Vue.component('k-block-selector');
 
       Vue.component('k-block-selector', {
         template: `
           <k-dialog
-            ref="dialog"
-            :cancel-button="false"
-            :submit-button="false"
+            v-bind="$props"
             class="k-block-selector"
             :size="showVisualBlockSelector ? 'visual' : 'medium'"
-            @open="onOpen"
-            @close="onClose"
+            @cancel="$emit('cancel')"
+            @submit="$emit('submit', value)"
           >
             <k-headline v-if="headline">
               {{ headline }}
             </k-headline>
+
             <details
               v-for="(group, groupName) in groups"
               :key="groupName"
               :open="group.open"
             >
               <summary>{{ group.label }}</summary>
-
-              <div class="k-block-types" v-if="showVisualBlockSelector">
-                <k-button
+              <k-navigate
+                v-if="showVisualBlockSelector"
+                class="k-block-types"
+              >
+                <button
+                  class="k-block-selector-button"
                   v-for="fieldset in group.fieldsets"
-                  :ref="'fieldset-' + fieldset.index"
                   :key="fieldset.name"
-                  :disabled="disabled.includes(fieldset.type)"
-                  @keydown.up="navigate(fieldset.index - 1)"
-                  @keydown.down="navigate(fieldset.index + 1)"
-                  @click="add(fieldset.type)"
+                  :disabled="disabledFieldsets.includes(fieldset.type)"
+                  :aria-disabled="disabledFieldsets.includes(fieldset.type)"
+                  @click="$emit('submit', fieldset.type)"
+                  @focus.native="$emit('input', fieldset.type)"
                 >
-                  <img v-if="previewImages[fieldset.type]" :src="previewImages[fieldset.type].src" alt="" />
-                  <k-icon v-else :type="fieldset.icon || 'box'" />
-                  <span>{{ fieldset.name }}</span>
-                </k-button>
-              </div>
+                  <span class="k-block-selector-button-preview">
+                    <img v-if="previewImages[fieldset.type]" :src="previewImages[fieldset.type].src" alt="" />
+                    <k-icon v-else :type="fieldset.icon || 'box'" />
+                  </span>
+                  <span class="k-block-selector-button-text">{{ fieldset.name }}</span>
+                </button>
+              </k-navigate>
 
-              <div class="k-block-types" v-else>
+              <k-navigate
+                v-else
+                class="k-block-types"
+              >
                 <k-button
                   v-for="fieldset in group.fieldsets"
-                  :ref="'fieldset-' + fieldset.index"
                   :key="fieldset.name"
-                  :disabled="disabled.includes(fieldset.type)"
-                  :icon="fieldset.icon || 'box'"
+                  :disabled="disabledFieldsets.includes(fieldset.type)"
+                  :icon="fieldset.icon ?? 'box'"
                   :text="fieldset.name"
-                  @keydown.up="navigate(fieldset.index - 1)"
-                  @keydown.down="navigate(fieldset.index + 1)"
-                  @click="add(fieldset.type)"
+                  size="lg"
+                  @click="$emit('submit', fieldset.type)"
+                  @focus.native="$emit('input', fieldset.type)"
                 />
-              </div>
+              </k-navigate>
             </details>
             <!-- eslint-disable vue/no-v-html -->
             <p
@@ -160,7 +164,9 @@ panel.plugin('junohamburg/visual-block-selector', {
             return showVisualBlockSelector;
           }
         },
-        methods: original.options.methods
+        methods: original.options.methods,
+        created: original.options.created,
+        destroyed: original.options.destroyed
       });
     }
   ]

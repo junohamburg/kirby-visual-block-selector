@@ -1,8 +1,10 @@
 # Kirby Visual Block Selector
 
-This plugin for **Kirby 3** replaces the block selector with a customized version that displays a preview image for each block.
+This plugin for **Kirby 4** replaces the block selector with a customized version that displays a preview image for each block.
 
-![Visual block selector](https://github.com/junohamburg/kirby-visual-block-selector/assets/77532479/520481ea-08db-4620-8aa6-8f88cc4ec595)
+![screenshot-v4](https://github.com/junohamburg/kirby-visual-block-selector/assets/77532479/eca916ca-cdac-452b-b902-fe3bf2b9514d)
+
+Please note: If you are using **Kirby 3**, please us [v1.1.2](https://github.com/junohamburg/kirby-visual-block-selector/releases/tag/1.1.2)
 
 ## Installation
 
@@ -10,16 +12,16 @@ This plugin for **Kirby 3** replaces the block selector with a customized versio
 
 Download and copy this repository to `/site/plugins/kirby-visual-block-selector`.
 
-### Git submodule
-
-```
-git submodule add https://github.com/junohamburg/kirby-visual-block-selector.git site/plugins/kirby-visual-block-selector
-```
-
 ### Composer
 
 ```
 composer require junohamburg/kirby-visual-block-selector
+```
+
+### Git submodule
+
+```
+git submodule add https://github.com/junohamburg/kirby-visual-block-selector.git site/plugins/kirby-visual-block-selector
 ```
 
 ## Setup
