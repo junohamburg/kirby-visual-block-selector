@@ -11,14 +11,7 @@ panel.plugin('junohamburg/visual-block-selector', {
 
     const unsubscribe = Vue.$store.subscribeAction(async (action, state) => {
       // Fetch preview images once, but only if user is logged in
-      // Kirby v4
-      if (window.panel.user !== undefined) {
-        if (window.panel.user.id === null) return;
-      }
-      // Kirby v3
-      else {
-        if (Vue.$user === undefined || Vue.$user === null) return;
-      }
+      if (Vue.$user === undefined || Vue.$user === null) return;
 
       unsubscribe();
 
