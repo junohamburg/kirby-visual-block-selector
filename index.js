@@ -66,108 +66,96 @@ panel.plugin('junohamburg/visual-block-selector', {
       });
     });
   },
-  use: [
-    function (Vue) {
-      const original = Vue.component('k-block-selector');
+  components: {
+    'k-block-selector': {
+      extends: 'k-block-selector',
+      template: `
+        <k-dialog
+          :cancel-button="false"
+          :size="showVisualBlockSelector ? 'visual' : 'medium'"
+          :submit-button="false"
+          :visible="true"
+          class="k-block-selector"
+          @cancel="$emit('cancel')"
+          @submit="$emit('submit', value)"
+        >
+          <k-headline v-if="headline">
+            {{ headline }}
+          </k-headline>
 
-      Vue.component('k-block-selector', {
-        template: `
-          <k-dialog
-            v-bind="$props"
-            class="k-block-selector"
-            :size="showVisualBlockSelector ? 'visual' : 'medium'"
-            @cancel="$emit('cancel')"
-            @submit="$emit('submit', value)"
+          <details
+            v-for="(group, groupName) in groups"
+            :key="groupName"
+            :open="group.open"
           >
-            <k-headline v-if="headline">
-              {{ headline }}
-            </k-headline>
-
-            <details
-              v-for="(group, groupName) in groups"
-              :key="groupName"
-              :open="group.open"
+            <summary>{{ group.label }}</summary>
+            <k-navigate
+              v-if="showVisualBlockSelector"
+              class="k-block-types"
             >
-              <summary>{{ group.label }}</summary>
-              <k-navigate
-                v-if="showVisualBlockSelector"
-                class="k-block-types"
+              <button
+                class="k-block-selector-button"
+                v-for="fieldset in group.fieldsets"
+                :key="fieldset.name"
+                :disabled="disabledFieldsets.includes(fieldset.type)"
+                :aria-disabled="disabledFieldsets.includes(fieldset.type)"
+                @click="$emit('submit', fieldset.type)"
+                @focus.native="$emit('input', fieldset.type)"
               >
-                <button
-                  class="k-block-selector-button"
-                  v-for="fieldset in group.fieldsets"
-                  :key="fieldset.name"
-                  :disabled="disabledFieldsets.includes(fieldset.type)"
-                  :aria-disabled="disabledFieldsets.includes(fieldset.type)"
-                  @click="$emit('submit', fieldset.type)"
-                  @focus.native="$emit('input', fieldset.type)"
-                >
-                  <span class="k-block-selector-button-preview">
-                    <img v-if="previewImages[fieldset.type]" :src="previewImages[fieldset.type].src" alt="" />
-                    <k-icon v-else :type="fieldset.icon || 'box'" />
-                  </span>
-                  <span class="k-block-selector-button-text">{{ fieldset.name }}</span>
-                </button>
-              </k-navigate>
+                <span class="k-block-selector-button-preview">
+                  <img v-if="previewImages[fieldset.type]" :src="previewImages[fieldset.type].src" alt="" />
+                  <k-icon v-else :type="fieldset.icon || 'box'" />
+                </span>
+                <span class="k-block-selector-button-text">{{ fieldset.name }}</span>
+              </button>
+            </k-navigate>
 
-              <k-navigate
-                v-else
-                class="k-block-types"
-              >
-                <k-button
-                  v-for="fieldset in group.fieldsets"
-                  :key="fieldset.name"
-                  :disabled="disabledFieldsets.includes(fieldset.type)"
-                  :icon="fieldset.icon ?? 'box'"
-                  :text="fieldset.name"
-                  size="lg"
-                  @click="$emit('submit', fieldset.type)"
-                  @focus.native="$emit('input', fieldset.type)"
-                />
-              </k-navigate>
-            </details>
-            <!-- eslint-disable vue/no-v-html -->
-            <p
-              class="k-clipboard-hint"
-              v-html="$t('field.blocks.fieldsets.paste', { shortcut })"
-            />
-            <!-- eslint-enable -->
-          </k-dialog>
-        `,
-        inheritAttrs: original.options.inheritAttrs,
-        props: original.options.props,
-        data() {
-          return {
-            ...original.options.data.call(this)
-          };
+            <k-navigate
+              v-else
+              class="k-block-types"
+            >
+              <k-button
+                v-for="fieldset in group.fieldsets"
+                :key="fieldset.name"
+                :disabled="disabledFieldsets.includes(fieldset.type)"
+                :icon="fieldset.icon ?? 'box'"
+                :text="fieldset.name"
+                size="lg"
+                @click="$emit('submit', fieldset.type)"
+                @focus.native="$emit('input', fieldset.type)"
+              />
+            </k-navigate>
+          </details>
+          <!-- eslint-disable vue/no-v-html -->
+          <p
+            class="k-clipboard-hint"
+            v-html="$t('field.blocks.fieldsets.paste', { shortcut })"
+          />
+          <!-- eslint-enable -->
+        </k-dialog>
+      `,
+      computed: {
+        previewImages() {
+          return this.$store.state.visualBlockSelector.images;
         },
-        computed: {
-          ...original.options.computed,
-          previewImages() {
-            return this.$store.state.visualBlockSelector.images;
-          },
-          showVisualBlockSelector() {
-            let showVisualBlockSelector = false;
+        showVisualBlockSelector() {
+          let showVisualBlockSelector = false;
 
-            for (const group of Object.values(this.groups)) {
-              for (const fieldset of group.fieldsets) {
-                if (
-                  this.$store.state.visualBlockSelector.blockTypes.includes(
-                    fieldset.type
-                  )
-                ) {
-                  showVisualBlockSelector = true;
-                }
+          for (const group of Object.values(this.groups)) {
+            for (const fieldset of group.fieldsets) {
+              if (
+                this.$store.state.visualBlockSelector.blockTypes.includes(
+                  fieldset.type
+                )
+              ) {
+                showVisualBlockSelector = true;
               }
             }
-
-            return showVisualBlockSelector;
           }
-        },
-        methods: original.options.methods,
-        created: original.options.created,
-        destroyed: original.options.destroyed
-      });
+
+          return showVisualBlockSelector;
+        }
+      }
     }
-  ]
+  }
 });
