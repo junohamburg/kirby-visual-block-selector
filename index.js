@@ -1,76 +1,72 @@
-panel.plugin('junohamburg/visual-block-selector', {
-  created(Vue) {
-    function loadImage(url) {
-      return new Promise(resolve => {
-        const image = new Image();
-        image.onload = resolve.bind(null, image);
-        image.onerror = resolve;
-        image.src = url;
-      });
-    }
+const visualBlockStore = Vue.observable({
+	blockTypes: [],
+	images: {},
+	isLoading: false,
+	hasFetched: false,
+	error: null,
+});
 
-    const unsubscribe = Vue.$store.subscribeAction(async (action, state) => {
-      // Fetch preview images once, but only if user is logged in
-      if (window.panel.user.id === null) return;
+function loadImage(url) {
+	return new Promise((resolve) => {
+		const image = new Image();
+		image.onload = () => resolve(image);
+		image.onerror = () => resolve(null); // Resolve with null on error
+		image.src = url;
+	});
+}
 
-      unsubscribe();
+async function fetchAndLoadVisualBlockData(api) {
+	const store = visualBlockStore;
 
-      // Create custom store for block selector
-      Vue.$store.registerModule('visualBlockSelector', {
-        state: () => ({
-          blockTypes: [],
-          images: {}
-        }),
-        mutations: {
-          updateBlockTypes(state, blockTypes) {
-            state.blockTypes = blockTypes;
-          },
-          updateImages(state, images) {
-            state.images = images;
-          }
-        },
-        actions: {
-          updateBlockTypes({ commit }, { blockTypes }) {
-            commit('updateBlockTypes', blockTypes);
-          },
-          updateImages({ commit }, { images }) {
-            commit('updateImages', images);
-          }
-        }
-      });
+	if (!api) {
+		store.error = "Internal error: API not available.";
+		return;
+	}
+	if (store.hasFetched || store.isLoading) {
+		return;
+	}
+	if (!window.panel || !window.panel.user || window.panel.user.id === null) {
+		return;
+	}
 
-      const apiResponse = await Vue.$api.get('visual-block-selector');
-      const blockTypes = [];
-      const images = {};
+	store.isLoading = true;
+	store.error = null;
 
-      // Get block types
-      for (const name of Object.keys(apiResponse)) {
-        blockTypes.push(name);
-      }
+	try {
+		const apiResponse = await api.get("visual-block-selector");
+		const blockTypes = Object.keys(apiResponse);
+		const images = {};
 
-      // Update store
-      Vue.$store.dispatch({
-        type: 'updateBlockTypes',
-        blockTypes: blockTypes
-      });
+		store.blockTypes = blockTypes;
 
-      // Load images
-      for (const [name, img] of Object.entries(apiResponse)) {
-        images[name] = await loadImage(img);
-      }
+		const loadImagePromises = Object.entries(apiResponse).map(
+			async ([name, url]) => {
+				const img = await loadImage(url);
+				images[name] = img; // Store image object or null
+			},
+		);
 
-      // Update store
-      Vue.$store.dispatch({
-        type: 'updateImages',
-        images: images
-      });
-    });
-  },
-  components: {
-    'k-block-selector': {
-      extends: 'k-block-selector',
-      template: `
-        <k-dialog
+		await Promise.all(loadImagePromises);
+
+		store.images = images;
+		store.hasFetched = true;
+	} catch (error) {
+		store.error = "Failed to load visual block data.";
+	} finally {
+		store.isLoading = false;
+	}
+}
+
+panel.plugin("junohamburg/visual-block-selector", {
+	created(VueInstance) {
+		fetchAndLoadVisualBlockData(VueInstance.$api);
+	},
+
+	components: {
+		"k-block-selector": {
+			extends: "k-block-selector",
+			template: `
+			<k-dialog
           :cancel-button="false"
           :size="showVisualBlockSelector ? 'visual' : 'medium'"
           :submit-button="false"
@@ -134,28 +130,53 @@ panel.plugin('junohamburg/visual-block-selector', {
           <!-- eslint-enable -->
         </k-dialog>
       `,
-      computed: {
-        previewImages() {
-          return this.$store.state.visualBlockSelector.images;
-        },
-        showVisualBlockSelector() {
-          let showVisualBlockSelector = false;
+			created() {
+				fetchAndLoadVisualBlockData(this.$api);
+			},
+			computed: {
+				isLoading() {
+					return visualBlockStore.isLoading;
+				},
+				fetchError() {
+					return visualBlockStore.error;
+				},
+				previewImages() {
+					return visualBlockStore.images;
+				},
+				showVisualBlockSelector() {
+					const store = visualBlockStore;
+					if (store.isLoading || !store.hasFetched || store.error) {
+						return false;
+					}
 
-          for (const group of Object.values(this.groups)) {
-            for (const fieldset of group.fieldsets) {
-              if (
-                this.$store.state.visualBlockSelector.blockTypes.includes(
-                  fieldset.type
-                )
-              ) {
-                showVisualBlockSelector = true;
-              }
-            }
-          }
+					const availableVisualTypes = store.blockTypes;
+					if (!availableVisualTypes || availableVisualTypes.length === 0) {
+						return false;
+					}
 
-          return showVisualBlockSelector;
-        }
-      }
-    }
-  }
+					for (const group of Object.values(this.groups)) {
+						for (const fieldset of group.fieldsets) {
+							if (availableVisualTypes.includes(fieldset.type)) {
+								return true;
+							}
+						}
+					}
+
+					return false;
+				},
+			},
+			methods: {
+				isDisabled(type) {
+					return this.disabledFieldsets.includes(type);
+				},
+				submit(type) {
+					this.$emit("submit", type);
+				},
+				getImageSrc(type) {
+					const image = visualBlockStore.images[type];
+					return image?.src ?? null;
+				},
+			},
+		},
+	},
 });

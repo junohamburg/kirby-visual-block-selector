@@ -17,7 +17,7 @@
 
 /* Button */
 .k-block-selector-button {
-  background-color: var(--color-white);
+  background-color: var(--item-color-back);
   border-radius: var(--button-rounded);
   font-variant-numeric: tabular-nums;
   box-shadow: var(--shadow);
@@ -57,6 +57,7 @@
 .k-block-selector-button-preview .k-icon {
   height: calc(var(--icon-size) * 1.25);
   width: calc(var(--icon-size) * 1.25);
+  color: var(--color-text-dimmed);
 }
 
 @media (min-width: 30em) {
@@ -73,5 +74,5 @@
   word-wrap: break-word;
   overflow-wrap: break-word;
   padding: 0.625em 0.625em 0.6875em;
-  border-top: 1px solid var(--color-gray-250, #e8e8e8);
+  border-top: 1px solid var(--color-border);
 }
