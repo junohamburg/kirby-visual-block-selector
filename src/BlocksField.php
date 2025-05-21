@@ -19,7 +19,7 @@ class BlocksField extends KirbyBlocksField
 	 */
 	protected function previews(): array
 	{
-		$kirby    = kirby();
+		$kirby    = $this->kirby();
 		$previews = [];
 		$dir      = 'block-previews';
 		$path     = $kirby->root('assets') . '/' . $dir;
