@@ -44,11 +44,12 @@ class BlocksField extends KirbyBlocksField
 		$props    = parent::props();
 		$previews = $this->previews();
 
-		$props['fieldsets'] = array_map(function (array $fieldset) use ($previews) {
-			$fieldset['preview'] = $previews[$fieldset['type']] ?? null;
-			return $fieldset;
-		}, $props['fieldsets']);
-
-		return $props;
+        return [
+			...$props,
+			'fieldsets' => array_map(fn (array $fieldset) => [
+				...$fieldset,
+				'preview' => $previews[$fieldset['type']] ?? null
+			], $props['fieldsets'])
+		];
 	}
 }
