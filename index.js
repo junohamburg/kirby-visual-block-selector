@@ -36,7 +36,7 @@ panel.plugin('junohamburg/visual-block-selector', {
 								@focus.native="$emit('input', fieldset.type)"
 							>
 								<span class="k-block-selector-button-preview">
-									<img v-if="fieldset.preview" :src="fieldset.preview" alt="" />
+									<img v-if="fieldset.previewImage" :src="fieldset.previewImage" alt="" />
 									<k-icon v-else :type="fieldset.icon || 'box'" />
 								</span>
 								<span class="k-block-selector-button-text">{{ fieldset.name }}</span>
@@ -71,7 +71,7 @@ panel.plugin('junohamburg/visual-block-selector', {
 				showVisualBlockSelector() {
 					for (const group of Object.values(this.groups)) {
 						for (const fieldset of group.fieldsets) {
-							if (fieldset.preview !== null) {
+							if (fieldset.previewImage !== null) {
 								return true;
 							}
 						}

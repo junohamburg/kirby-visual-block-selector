@@ -17,7 +17,7 @@ class BlocksField extends KirbyBlocksField
 	 *
 	 * @return array<string, string>
 	 */
-	protected function previews(): array
+	protected function previewImages(): array
 	{
 		$kirby    = $this->kirby();
 		$previews = [];
@@ -41,14 +41,14 @@ class BlocksField extends KirbyBlocksField
 	 */
 	public function props(): array
 	{
-		$props    = parent::props();
-		$previews = $this->previews();
+		$props          = parent::props();
+		$previewsImages = $this->previewImages();
 
         return [
 			...$props,
 			'fieldsets' => array_map(fn (array $fieldset) => [
 				...$fieldset,
-				'preview' => $previews[$fieldset['type']] ?? null
+				'previewImage' => $previewsImages[$fieldset['type']] ?? null
 			], $props['fieldsets'])
 		];
 	}
