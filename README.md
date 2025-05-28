@@ -1,9 +1,10 @@
 # Kirby Visual Block Selector
 
-This plugin for **Kirby 4** replaces the block selector with a customized version that displays a preview image for each block.
+This plugin for **Kirby 5** replaces the block selector with a customized version that displays a preview image for each block.
 
 ![Visual block selector](https://github.com/junohamburg/kirby-visual-block-selector/assets/77532479/5f742752-85ac-44f0-8fd2-7c9031df1387)
 
+Please note: If you are using **Kirby 4**, please install [v2.1.0](https://github.com/junohamburg/kirby-visual-block-selector/releases/tag/2.1.0).
 Please note: If you are using **Kirby 3**, please install [v1.1.2](https://github.com/junohamburg/kirby-visual-block-selector/releases/tag/1.1.2).
 
 ## Installation
