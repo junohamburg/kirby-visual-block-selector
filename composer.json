@@ -3,7 +3,7 @@
   "description": "Kirby Visual Block Selector",
   "license": "MIT",
   "type": "kirby-plugin",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "authors": [
     {
       "name": "JUNO",
