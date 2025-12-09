@@ -70,7 +70,7 @@ export default {
     showVisualBlockSelector() {
       for (const group of Object.values(this.groups)) {
         for (const fieldset of group.fieldsets) {
-          if (fieldset.previewImage !== null) {
+          if (fieldset.previewImage) {
             return true;
           }
         }
