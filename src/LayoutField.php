@@ -2,13 +2,13 @@
 
 namespace JunoHamburg\VisualBlockSelector;
 
-use Kirby\Form\Field\BlocksField as KirbyBlocksField;
+use Kirby\Form\Field\LayoutField as KirbyLayoutField;
 
 /**
- * Custom BlocksField class, which provides the
- * visual block selector component with preview images.
+ * Custom LayoutField that adds preview images to fieldsets
+ * within layout columns
  */
-class BlocksField extends KirbyBlocksField
+class LayoutField extends KirbyLayoutField
 {
 	use BlocksFieldPreviewTrait;
 
